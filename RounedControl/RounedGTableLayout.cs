@@ -23,6 +23,7 @@ namespace RounedControl
         protected override void OnPaint(PaintEventArgs e)
         {
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            
             using (GraphicsPath myPath = new GraphicsPath())
             {
                 //(0,0일때를 대비하여 BoaderWidth 만큼 좌료를 띄어줘서 보더가 안보이는걸 방지)

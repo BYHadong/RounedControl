@@ -16,11 +16,9 @@ namespace RounedControl
 
         #region 속성
         private Color textColor = Color.Black;
-        private Font textFont = new Font("맑은 고딕", 12F, FontStyle.Bold);
         private Color borderColor = Color.Gray;
         private int borderWidth = 3;
         private Color textBackColor = Color.Gray;
-        private Color boxColor = Color.White;
         private int radius = 30;
         private TitleTextAlign textAlign = TitleTextAlign.Center;
         
@@ -28,10 +26,6 @@ namespace RounedControl
         /// 상단 타이틀 박스의 텍스트 색상을 설정
         /// </summary>
         public Color TextColor { get => textColor; set { textColor = value; Invalidate(); } }
-        /// <summary>
-        /// 상단 타이틀 박스의 폰트를 설정
-        /// </summary>
-        public Font TextFont { get => textFont; set { textFont = value; Invalidate(); } }
         /// <summary>
         /// 상단 타이틀 박스의 배경 색상을 설정
         /// </summary>
@@ -43,10 +37,6 @@ namespace RounedControl
         /// 테두리의 굵기를 설정
         /// </summary>
         public int BorderWidth { get => borderWidth; set { borderWidth = value; Invalidate(); } }
-        /// <summary>
-        /// 배경을 색상을 설정
-        /// </summary>
-        public Color BoxColor { get => boxColor; set { boxColor = value; Invalidate(); } }
         /// <summary>
         /// 둥근 정도를 설정
         /// </summary>
@@ -62,7 +52,7 @@ namespace RounedControl
         /// <summary>
         /// 마진값
         /// </summary>
-        private readonly int DEFAULT_MARGIN = 3;
+        private const int DEFAULT_MARGIN = 3;
         #endregion
 
         //padding 값(Dock 설정)
@@ -75,6 +65,8 @@ namespace RounedControl
         public RounedGroupBox()
         {
             SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
+            Font = new Font("맑은 고딕", 12F, FontStyle.Bold);
+            Dock = DockStyle.Fill;
             Width = 200;
             Height = 200;
         }
@@ -111,14 +103,14 @@ namespace RounedControl
                 x = rect.X;
                 y = rect.Y - (BorderWidth / 2);
                 cwidth = rect.Width;
-                cheight = TextFont.Height + (BorderWidth * 2) + DEFAULT_MARGIN;
+                cheight = Font.Height + (BorderWidth * 2) + DEFAULT_MARGIN;
                 var piont = new Point(x, y);
                 var size = new Size(cwidth, cheight);
                 //상단 텍스트 쪽 상자
                 rect = new Rectangle(piont, size);
                 SetDisplayRectangle(rect);
                 //Content Box
-                using (var brush = new SolidBrush(BoxColor))
+                using (var brush = new SolidBrush(BackColor))
                     e.Graphics.FillPath(brush, myPath);
                 var clip = e.Graphics.ClipBounds;
                 e.Graphics.SetClip(rect);
@@ -129,21 +121,21 @@ namespace RounedControl
                 switch (TextAlign)
                 {
                     case TitleTextAlign.Center:
-                        TextRenderer.DrawText(e.Graphics, Text, TextFont, rect, TextColor, (TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter));
+                        TextRenderer.DrawText(e.Graphics, Text, Font, rect, TextColor, (TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter));
                         break;
 
                     case TitleTextAlign.Left:
                         var rectsu = rect;
                         rectsu.X = DEFAULT_MARGIN + BorderWidth * 2;
-                        TextRenderer.DrawText(e.Graphics, Text, TextFont, rectsu, TextColor, (TextFormatFlags.Left | TextFormatFlags.VerticalCenter));
+                        TextRenderer.DrawText(e.Graphics, Text, Font, rectsu, TextColor, (TextFormatFlags.Left | TextFormatFlags.VerticalCenter));
                         break;
                     case TitleTextAlign.Right:
                         rectsu = rect;
                         rectsu.Width = rect.Width - DEFAULT_MARGIN - BorderWidth * 2;
-                        TextRenderer.DrawText(e.Graphics, Text, TextFont, rectsu, TextColor, (TextFormatFlags.Right | TextFormatFlags.VerticalCenter));
+                        TextRenderer.DrawText(e.Graphics, Text, Font, rectsu, TextColor, (TextFormatFlags.Right | TextFormatFlags.VerticalCenter));
                         break;
                     default:
-                        TextRenderer.DrawText(e.Graphics, Text, TextFont, rect, TextColor, (TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter));
+                        TextRenderer.DrawText(e.Graphics, Text, Font, rect, TextColor, (TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter));
                         break;
                 }
                 e.Graphics.SetClip(clip);

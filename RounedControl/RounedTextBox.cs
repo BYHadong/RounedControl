@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace RounedControl
 {
-    public class RounedTextBox : UserControl
+    public class RounedTextBox : RichTextBox
     {
         private StringBuilder textBuilder = new StringBuilder();
         private readonly Color SELECT_COLOR = Color.SkyBlue;
@@ -92,8 +92,9 @@ namespace RounedControl
                 else
                 {
                     textBuilder.Append(e.KeyChar);
+                    
                 }
-                Text = textBuilder.ToString();               
+                Text = textBuilder.ToString();
                 Invalidate();
             }
         }
@@ -102,7 +103,7 @@ namespace RounedControl
         {
             base.OnPaint(e);
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            using (var myPath = CreateRounedControl.CreateRounedBasicControl(ClientRectangle, Radius, BorderSize))
+            using (var myPath = CreateRounedControl.CreateRounedButtonControl(e.Graphics, this, ClientRectangle, Radius, BorderSize))
             {
                 using (var brush = new SolidBrush(BackColor))
                     e.Graphics.FillPath(brush, myPath);
