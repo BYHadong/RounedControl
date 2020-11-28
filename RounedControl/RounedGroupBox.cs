@@ -21,7 +21,7 @@ namespace RounedControl
         private Color textBackColor = Color.Gray;
         private int radius = 30;
         private TitleTextAlign textAlign = TitleTextAlign.Center;
-        
+        private Font titleFont;
         /// <summary>
         /// 상단 타이틀 박스의 텍스트 색상을 설정
         /// </summary>
@@ -45,6 +45,8 @@ namespace RounedControl
         /// 상단 타이틀의 제목의 위치를 수정
         /// </summary>
         public TitleTextAlign TextAlign { get => textAlign; set { textAlign = value; Invalidate(); } }
+
+        public Font TitleFont { get => titleFont; set => titleFont = value; }
         #endregion
 
         #region 상수
@@ -65,7 +67,7 @@ namespace RounedControl
         public RounedGroupBox()
         {
             SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
-            Font = new Font("맑은 고딕", 12F, FontStyle.Bold);
+            TitleFont = new Font("맑은 고딕", 12F, FontStyle.Bold);
             Dock = DockStyle.Fill;
             Width = 200;
             Height = 200;
@@ -103,7 +105,7 @@ namespace RounedControl
                 x = rect.X;
                 y = rect.Y - (BorderWidth / 2);
                 cwidth = rect.Width;
-                cheight = Font.Height + (BorderWidth * 2) + DEFAULT_MARGIN;
+                cheight = TitleFont.Height + (BorderWidth * 2) + DEFAULT_MARGIN;
                 var piont = new Point(x, y);
                 var size = new Size(cwidth, cheight);
                 //상단 텍스트 쪽 상자
@@ -121,21 +123,21 @@ namespace RounedControl
                 switch (TextAlign)
                 {
                     case TitleTextAlign.Center:
-                        TextRenderer.DrawText(e.Graphics, Text, Font, rect, TextColor, (TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter));
+                        TextRenderer.DrawText(e.Graphics, Text, TitleFont, rect, TextColor, (TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter));
                         break;
 
                     case TitleTextAlign.Left:
                         var rectsu = rect;
                         rectsu.X = DEFAULT_MARGIN + BorderWidth * 2;
-                        TextRenderer.DrawText(e.Graphics, Text, Font, rectsu, TextColor, (TextFormatFlags.Left | TextFormatFlags.VerticalCenter));
+                        TextRenderer.DrawText(e.Graphics, Text, TitleFont, rectsu, TextColor, (TextFormatFlags.Left | TextFormatFlags.VerticalCenter));
                         break;
                     case TitleTextAlign.Right:
                         rectsu = rect;
                         rectsu.Width = rect.Width - DEFAULT_MARGIN - BorderWidth * 2;
-                        TextRenderer.DrawText(e.Graphics, Text, Font, rectsu, TextColor, (TextFormatFlags.Right | TextFormatFlags.VerticalCenter));
+                        TextRenderer.DrawText(e.Graphics, Text, TitleFont, rectsu, TextColor, (TextFormatFlags.Right | TextFormatFlags.VerticalCenter));
                         break;
                     default:
-                        TextRenderer.DrawText(e.Graphics, Text, Font, rect, TextColor, (TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter));
+                        TextRenderer.DrawText(e.Graphics, Text, TitleFont, rect, TextColor, (TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter));
                         break;
                 }
                 e.Graphics.SetClip(clip);

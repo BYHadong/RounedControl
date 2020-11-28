@@ -29,6 +29,9 @@ namespace RounedControl
         private bool borderVisible = false;
         private StringAlignment textAlignFormat = StringAlignment.Center;
         private ButtonStyle buttonStyle = ButtonStyle.Button;
+        private int leavBorderSize;
+        private Color leavBorderColor;
+        private bool leavBorderVisible;
 
         public int Radius { get => radius; set { radius = value; Invalidate(); } }
         public bool Clicked { get => clicked; set { clicked = value; ClickChangeColor(); } }
@@ -101,7 +104,15 @@ namespace RounedControl
             base.OnMouseHover(e);
             if (Enabled)
             {
-                BackColor = CLICK_COLOR;
+                leavBorderSize = BorderSize;
+                leavBorderColor = BorderColor;
+                leavBorderVisible = BorderVisible;
+                if (BorderSize < 2)
+                {
+                    BorderSize = 4;
+                }
+                BorderVisible = true;
+                BorderColor = CLICK_COLOR;
             }
         }
 
@@ -110,10 +121,9 @@ namespace RounedControl
             base.OnMouseLeave(e);
             if (Enabled)
             {
-                if (BackColor != CLICK_COLOR)
-                {
-                    BackColor = leavColor;
-                }
+                BorderSize = leavBorderSize;
+                BorderColor = leavBorderColor;
+                BorderVisible = leavBorderVisible;
             }
         }
     }
