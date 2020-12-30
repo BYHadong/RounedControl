@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace RounedControl
 {
-    public class RounedTextBox : RichTextBox
+    public class RounedTextBox : UserControl
     {
         private StringBuilder textBuilder = new StringBuilder();
         private readonly Color SELECT_COLOR = Color.SkyBlue;
@@ -29,6 +29,12 @@ namespace RounedControl
         public delegate void InputEnterEventHanddler();
         public event InputEnterEventHanddler InputEnterEvent;
 
+        protected override void OnTextChanged(EventArgs e)
+        {
+            base.OnTextChanged(e);
+            Invalidate();
+        }
+
         public RounedTextBox()
         {
             SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
@@ -36,7 +42,7 @@ namespace RounedControl
             SetStyle(ControlStyles.UserMouse, true);
             Font = new Font("맑은 고딕", 12F, FontStyle.Bold);
         }
-
+        
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseClick(e);
@@ -45,7 +51,6 @@ namespace RounedControl
                 Focus();
                 textBuilder.Clear();
                 BorderColor = SELECT_COLOR;
-                Invalidate();
             }
         }
 
@@ -92,10 +97,8 @@ namespace RounedControl
                 else
                 {
                     textBuilder.Append(e.KeyChar);
-                    
                 }
                 Text = textBuilder.ToString();
-                Invalidate();
             }
         }
 

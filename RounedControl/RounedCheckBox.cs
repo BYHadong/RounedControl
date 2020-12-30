@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace RounedControl
 { 
     public partial class RounedCheckBox : UserControl
     {
+        public delegate void Label_ClickHanddler(Color borderColor);
+        public event Label_ClickHanddler Label_ClickEvent;
         public delegate void CheckBoxButton_ClickHanddler(bool btnClick, string labelText);
         public event CheckBoxButton_ClickHanddler CheckBoxBUtton_ClickEvent;
 
@@ -39,6 +42,11 @@ namespace RounedControl
                 checkBoxBtnClick = value;
                 checkBtn.Clicked = value;
             }
+        }
+
+        private void checkLabel_Click(object sender, EventArgs e)
+        {
+            Label_ClickEvent(checkLabel.BorderColor);
         }
     }
 }

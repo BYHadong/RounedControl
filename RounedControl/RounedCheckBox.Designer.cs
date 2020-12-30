@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.checkLabel = new RounedLabel();
-            this.checkBtn = new RounedButton();
+            this.checkLabel = new RounedControl.RounedLabel();
+            this.checkBtn = new RounedControl.RounedButton();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -69,6 +69,7 @@
             this.checkLabel.TabIndex = 0;
             this.checkLabel.Text = "checkLabel";
             this.checkLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkLabel.Click += new System.EventHandler(this.checkLabel_Click);
             // 
             // checkBtn
             // 
@@ -84,7 +85,7 @@
             this.checkBtn.Margin = new System.Windows.Forms.Padding(1, 3, 3, 3);
             this.checkBtn.Name = "checkBtn";
             this.checkBtn.Radius = 15;
-            this.checkBtn.SelectButtonStyle = RounedButton.ButtonStyle.CheckBox;
+            this.checkBtn.SelectButtonStyle = RounedControl.RounedButton.ButtonStyle.CheckBox;
             this.checkBtn.Size = new System.Drawing.Size(85, 68);
             this.checkBtn.TabIndex = 1;
             this.checkBtn.TextAlignFormat = System.Drawing.StringAlignment.Center;
