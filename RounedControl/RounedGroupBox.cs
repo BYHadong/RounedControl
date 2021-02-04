@@ -22,6 +22,8 @@ namespace RounedControl
         private int radius = 30;
         private TitleTextAlign textAlign = TitleTextAlign.Center;
         private Font titleFont;
+        private bool mainFrom = false;
+        private Rectangle headerRectangle;
         /// <summary>
         /// 상단 타이틀 박스의 텍스트 색상을 설정
         /// </summary>
@@ -47,6 +49,8 @@ namespace RounedControl
         public TitleTextAlign TextAlign { get => textAlign; set { textAlign = value; Invalidate(); } }
 
         public Font TitleFont { get => titleFont; set => titleFont = value; }
+        public bool MainFrom { get => mainFrom; set => mainFrom = value; }
+        public Rectangle HeaderRectangle { get => headerRectangle; set => headerRectangle = value; }
         #endregion
 
         #region 상수
@@ -109,8 +113,8 @@ namespace RounedControl
                 var piont = new Point(x, y);
                 var size = new Size(cwidth, cheight);
                 //상단 텍스트 쪽 상자
-                rect = new Rectangle(piont, size);
-                SetDisplayRectangle(rect);
+                HeaderRectangle = new Rectangle(piont, size);
+                SetDisplayRectangle(HeaderRectangle);
                 //Content Box
                 using (var brush = new SolidBrush(BackColor))
                     e.Graphics.FillPath(brush, myPath);
