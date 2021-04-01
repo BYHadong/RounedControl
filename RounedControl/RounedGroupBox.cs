@@ -14,6 +14,9 @@ namespace RounedControl
             Right
         }
 
+        //Event Var
+        private Point mouseDownLocation;
+
         #region 속성
         private Color textColor = Color.Black;
         private Color borderColor = Color.Gray;
@@ -24,6 +27,7 @@ namespace RounedControl
         private Font titleFont;
         private bool mainFrom = false;
         private Rectangle headerRectangle;
+
         /// <summary>
         /// 상단 타이틀 박스의 텍스트 색상을 설정
         /// </summary>
@@ -48,9 +52,9 @@ namespace RounedControl
         /// </summary>
         public TitleTextAlign TextAlign { get => textAlign; set { textAlign = value; Invalidate(); } }
 
-        public Font TitleFont { get => titleFont; set => titleFont = value; }
+        public Font TitleFont { get => titleFont; set { titleFont = value; Invalidate(); } }
         public bool MainFrom { get => mainFrom; set => mainFrom = value; }
-        public Rectangle HeaderRectangle { get => headerRectangle; set => headerRectangle = value; }
+        public Rectangle HeaderRectangle { get => headerRectangle;}
         #endregion
 
         #region 상수
@@ -67,7 +71,6 @@ namespace RounedControl
         private int paddingLeft = 0;
         private int paddingRight = 0;
 
-
         public RounedGroupBox()
         {
             SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
@@ -76,6 +79,55 @@ namespace RounedControl
             Width = 200;
             Height = 200;
         }
+
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            base.OnMouseMove(e);
+            if (e.Button == MouseButtons.Left && e.X <= HeaderRectangle.Width && e.Y <= HeaderRectangle.Height && MainFrom)
+            {
+                if(Parent is Form)
+                {
+                    var parent = Parent as Form;
+                    parent.Location = new Point(e.X + parent.Left - mouseDownLocation.X, e.Y + parent.Top - mouseDownLocation.Y);
+                }
+            }
+        }
+
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            base.OnMouseDown(e);
+            if(e.Button == MouseButtons.Left && e.X <= HeaderRectangle.Width && e.Y <= HeaderRectangle.Height && MainFrom)
+            {
+                mouseDownLocation = e.Location;
+                Console.WriteLine(mouseDownLocation.X + "/" + mouseDownLocation.Y);
+            }
+        }
+
+        protected override void OnMouseDoubleClick(MouseEventArgs e)
+        {
+            base.OnMouseDoubleClick(e);
+            if (e.Button == MouseButtons.Left && e.X <= HeaderRectangle.Width && e.Y <= HeaderRectangle.Height && MainFrom)
+            {
+                if(Parent is Form)
+                {
+                    var parent = Parent as Form;
+                    if (parent.WindowState == FormWindowState.Maximized)
+                    {
+                        parent.WindowState = FormWindowState.Normal;
+                        Width = parent.Width;
+                        Height = parent.Height;
+                    }
+                    else
+                    {
+                        parent.WindowState = FormWindowState.Maximized;
+                        Width = parent.Width;
+                        Height = parent.Height;
+                    }
+                }
+            }
+        }
+
+
 
         #region override
         /// <summary>
@@ -113,13 +165,13 @@ namespace RounedControl
                 var piont = new Point(x, y);
                 var size = new Size(cwidth, cheight);
                 //상단 텍스트 쪽 상자
-                HeaderRectangle = new Rectangle(piont, size);
+                headerRectangle = new Rectangle(piont, size);
                 SetDisplayRectangle(HeaderRectangle);
                 //Content Box
                 using (var brush = new SolidBrush(BackColor))
                     e.Graphics.FillPath(brush, myPath);
                 var clip = e.Graphics.ClipBounds;
-                e.Graphics.SetClip(rect);
+                e.Graphics.SetClip(HeaderRectangle);
                 //Title Box
                 using (var brush = new SolidBrush(TextBackColor))
                     e.Graphics.FillPath(brush, myPath);
@@ -127,17 +179,17 @@ namespace RounedControl
                 switch (TextAlign)
                 {
                     case TitleTextAlign.Center:
-                        TextRenderer.DrawText(e.Graphics, Text, TitleFont, rect, TextColor, (TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter));
+                        TextRenderer.DrawText(e.Graphics, Text, TitleFont, HeaderRectangle, TextColor, (TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter));
                         break;
 
                     case TitleTextAlign.Left:
-                        var rectsu = rect;
+                        var rectsu = HeaderRectangle;
                         rectsu.X = DEFAULT_MARGIN + BorderWidth * 2;
                         TextRenderer.DrawText(e.Graphics, Text, TitleFont, rectsu, TextColor, (TextFormatFlags.Left | TextFormatFlags.VerticalCenter));
                         break;
                     case TitleTextAlign.Right:
-                        rectsu = rect;
-                        rectsu.Width = rect.Width - DEFAULT_MARGIN - BorderWidth * 2;
+                        rectsu = HeaderRectangle;
+                        rectsu.Width = HeaderRectangle.Width - DEFAULT_MARGIN - BorderWidth * 2;
                         TextRenderer.DrawText(e.Graphics, Text, TitleFont, rectsu, TextColor, (TextFormatFlags.Right | TextFormatFlags.VerticalCenter));
                         break;
                     default:
