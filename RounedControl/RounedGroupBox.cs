@@ -99,7 +99,6 @@ namespace RounedControl
             if(e.Button == MouseButtons.Left && e.X <= HeaderRectangle.Width && e.Y <= HeaderRectangle.Height && MainFrom)
             {
                 mouseDownLocation = e.Location;
-                Console.WriteLine(mouseDownLocation.X + "/" + mouseDownLocation.Y);
             }
         }
 

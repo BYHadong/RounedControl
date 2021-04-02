@@ -7,7 +7,7 @@ namespace RounedControl
 {
     public class RounedButton : Button
     {
-        public delegate void ButtonClickEventHanddler(bool click, string name);
+        public delegate void ButtonClickEventHanddler(bool click, RounedButton name);
         public event ButtonClickEventHanddler RounedButton_ClickEvnet;
 
         public enum ButtonStyle
@@ -19,19 +19,20 @@ namespace RounedControl
         public readonly Color CLICK_COLOR = Color.LightSkyBlue;
         public readonly Color NOT_CLICK_COLOR = Color.LightGray;
         public readonly Color HOVER_BUTTON_COLOR = Color.DarkGray;
+        private readonly int HOVER_BORDER_SIZE = 4;
 
         public Color leavColor;
-
         private int radius = 30;
         private bool clicked = false;
         private Color borderColor = Color.Black;
-        private int borderSize = 5;
+        private int borderSize = 0;
         private bool borderVisible = false;
         private StringAlignment textAlignFormat = StringAlignment.Center;
         private ButtonStyle buttonStyle = ButtonStyle.Button;
         private int leavBorderSize;
         private Color leavBorderColor;
         private bool leavBorderVisible;
+        private bool hoverEvent = false;
 
         public int Radius { get => radius; set { radius = value; Invalidate(); } }
         public bool Clicked { get => clicked; set { clicked = value; ClickChangeColor(); } }
@@ -45,6 +46,7 @@ namespace RounedControl
         {
             SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
             SetStyle(ControlStyles.UserMouse, Enabled);
+            BackColor = Color.LightGray;
             leavColor = BackColor;
             ForeColor = Color.Black;
             Font = new Font("맑은 고딕", 12F, FontStyle.Bold);
@@ -95,25 +97,25 @@ namespace RounedControl
             if (Enabled)
             {
                 Clicked = !Clicked;
-                RounedButton_ClickEvnet?.Invoke(Clicked, Name);
+                RounedButton_ClickEvnet?.Invoke(Clicked, this);
+            }
+        }
+
+        protected override void OnMouseEnter(EventArgs e)
+        {
+            base.OnMouseEnter(e);
+            if (Enabled)
+            {
+                leavBorderSize = BorderSize;
+                leavBorderColor = BorderColor;
+                leavBorderVisible = BorderVisible;
+                MouseHoverAction();
             }
         }
 
         protected override void OnMouseHover(EventArgs e)
         {
             base.OnMouseHover(e);
-            if (Enabled)
-            {
-                leavBorderSize = BorderSize;
-                leavBorderColor = BorderColor;
-                leavBorderVisible = BorderVisible;
-                if (BorderSize < 2)
-                {
-                    BorderSize = 4;
-                }
-                BorderVisible = true;
-                BorderColor = CLICK_COLOR;
-            }
         }
 
         protected override void OnMouseLeave(EventArgs e)
@@ -121,10 +123,22 @@ namespace RounedControl
             base.OnMouseLeave(e);
             if (Enabled)
             {
-                BorderSize = leavBorderSize;
-                BorderColor = leavBorderColor;
-                BorderVisible = leavBorderVisible;
+                MouseLeaveAction();
             }
+        }
+
+        void MouseHoverAction()
+        {
+            BorderColor = BackColor != CLICK_COLOR ? CLICK_COLOR : NOT_CLICK_COLOR;
+            BorderVisible = true;
+            BorderSize = HOVER_BORDER_SIZE;
+        }
+
+        void MouseLeaveAction()
+        {
+            BorderSize = leavBorderSize;
+            BorderColor = leavBorderColor;
+            BorderVisible = leavBorderVisible;
         }
     }
 }
