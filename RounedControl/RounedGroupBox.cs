@@ -16,11 +16,12 @@ namespace RounedControl
 
         //Event Var
         private Point mouseDownLocation;
+        private Point mouseMoveLocation;
 
         #region 속성
         private Color textColor = Color.Black;
         private Color borderColor = Color.Gray;
-        private int borderWidth = 3;
+        private int borderWidth = 5;
         private Color textBackColor = Color.Gray;
         private int radius = 30;
         private TitleTextAlign textAlign = TitleTextAlign.Center;
@@ -54,7 +55,7 @@ namespace RounedControl
 
         public Font TitleFont { get => titleFont; set { titleFont = value; Invalidate(); } }
         public bool MainFrom { get => mainFrom; set => mainFrom = value; }
-        public Rectangle HeaderRectangle { get => headerRectangle;}
+        public Rectangle HeaderRectangle { get => headerRectangle; }
         #endregion
 
         #region 상수
@@ -75,39 +76,120 @@ namespace RounedControl
         {
             SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
             TitleFont = new Font("맑은 고딕", 12F, FontStyle.Bold);
-            Dock = DockStyle.Fill;
+            Font = new Font("맑은 고딕", 9F, FontStyle.Bold);
             Width = 200;
             Height = 200;
         }
 
-        protected override void OnMouseMove(MouseEventArgs e)
+        #region override
+        protected override void OnControlAdded(ControlEventArgs e)
         {
-            base.OnMouseMove(e);
-            if (e.Button == MouseButtons.Left && e.X <= HeaderRectangle.Width && e.Y <= HeaderRectangle.Height && MainFrom)
+            base.OnControlAdded(e);
+            var chiled = e.Control;
+            if (chiled.Dock == DockStyle.Fill || (chiled.Anchor == AnchorStyles.Top && chiled.Anchor == AnchorStyles.Bottom && chiled.Anchor == AnchorStyles.Right && chiled.Anchor == AnchorStyles.Left))
             {
-                if(Parent is Form)
-                {
-                    var parent = Parent as Form;
-                    parent.Location = new Point(e.X + parent.Left - mouseDownLocation.X, e.Y + parent.Top - mouseDownLocation.Y);
-                }
+                chiled.Location = new Point(BorderWidth, HeaderRectangle.Height);
+                chiled.Width = Width - BorderWidth;
+                chiled.Height = Height - HeaderRectangle.Height;
             }
         }
 
+        #region Mouse Event
+        protected override void OnMouseLeave(EventArgs e)
+        {
+            base.OnMouseLeave(e);
+            if ((mouseMoveLocation.X > BorderWidth || mouseMoveLocation.X < Width - BorderWidth - Margin.Right))
+            {
+                Cursor = Cursors.Default;
+            }
+        }
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            base.OnMouseMove(e);
+            mouseMoveLocation = e.Location;
+
+            if (e.Button != MouseButtons.Left)
+            {
+                if ((mouseMoveLocation.X <= HeaderRectangle.Width && mouseMoveLocation.Y <= HeaderRectangle.Height) && MainFrom)
+                {
+                    Cursor = Cursors.Hand;
+                }
+
+                if ((mouseMoveLocation.Y >= Height - BorderWidth - Margin.Bottom && mouseMoveLocation.X >= Width - BorderWidth) && MainFrom)
+                {
+                    Cursor = Cursors.SizeNWSE; // 좌상 우하
+                }
+                //else if ((mouseMoveLocation.Y <= BorderWidth && mouseMoveLocation.X >= Width - BorderWidth) ||
+                //    (mouseMoveLocation.Y >= Height - BorderWidth && mouseMoveLocation.X <= BorderWidth)
+                //    && MainFrom)
+                //{
+                //    Cursor = Cursors.SizeNESW; // 우상 좌하
+                //}
+                else if ((mouseMoveLocation.X >= Width - BorderWidth) && MainFrom)
+                {
+                    Cursor = Cursors.SizeWE; // 좌우
+                }
+                else if ((mouseMoveLocation.Y >= Height - BorderWidth) && MainFrom)
+                {
+                    Cursor = Cursors.SizeNS; // 상하
+                }
+
+                if(!(mouseMoveLocation.X <= HeaderRectangle.Width && mouseMoveLocation.Y <= HeaderRectangle.Height) && 
+                    !(mouseMoveLocation.Y >= Height - BorderWidth - Margin.Bottom && mouseMoveLocation.X >= Width - BorderWidth) && 
+                    !(mouseMoveLocation.X >= Width - BorderWidth) && 
+                    !(mouseMoveLocation.Y >= Height - BorderWidth))
+                {
+                    Cursor = Cursors.Default;
+                }
+
+            }
+            else if(e.Button == MouseButtons.Left)
+            {
+                if (Parent is Form)
+                {
+                    var parent = Parent as Form;
+                    if (Cursor.Current == Cursors.Hand)
+                    {
+                        parent.Location = new Point(e.X + parent.Left - mouseDownLocation.X, e.Y + parent.Top - mouseDownLocation.Y);
+                    }
+                    //상하
+                    else if (Cursor.Current == Cursors.SizeNS)
+                    {
+                        var width = Width;
+                        var height = (mouseMoveLocation.Y);
+                        parent.Size = new Size(width, height);
+                    }
+                    //좌우
+                    else if (Cursor.Current == Cursors.SizeWE)
+                    {
+                        var width = (mouseMoveLocation.X);
+                        var height = Height;
+                        parent.Size = new Size(width, height);
+                    }
+                    //좌상 우하
+                    else if (Cursor.Current == Cursors.SizeNWSE)
+                    {
+                        var width = (mouseMoveLocation.X);
+                        var height = (mouseMoveLocation.Y);
+                        parent.Size = new Size(width, height);
+                    }
+                }
+            }
+        }
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
-            if(e.Button == MouseButtons.Left && e.X <= HeaderRectangle.Width && e.Y <= HeaderRectangle.Height && MainFrom)
+            if (e.Button == MouseButtons.Left && MainFrom)
             {
                 mouseDownLocation = e.Location;
             }
         }
-
         protected override void OnMouseDoubleClick(MouseEventArgs e)
         {
             base.OnMouseDoubleClick(e);
-            if (e.Button == MouseButtons.Left && e.X <= HeaderRectangle.Width && e.Y <= HeaderRectangle.Height && MainFrom)
+            if (e.Button == MouseButtons.Left && Cursor == Cursors.Hand)
             {
-                if(Parent is Form)
+                if (Parent is Form)
                 {
                     var parent = Parent as Form;
                     if (parent.WindowState == FormWindowState.Maximized)
@@ -125,29 +207,7 @@ namespace RounedControl
                 }
             }
         }
-
-
-
-        #region override
-        /// <summary>
-        /// Dock 설정
-        /// </summary>
-        protected override void OnPaddingChanged(EventArgs e)
-        {
-            base.OnPaddingChanged(e);
-            if (Padding.Top < paddingTop || (Padding.Left | Padding.Right | Padding.Bottom) < paddingBottom)
-            {
-                Padding = new Padding(paddingLeft, paddingTop, paddingRight, paddingBottom);
-                return;
-            }
-            int left, top, right, bottom;
-            left = Padding.Left;
-            top = Padding.Top;
-            right = Padding.Right;
-            bottom = Padding.Bottom;
-            Padding = new Padding(left, top, right, bottom);
-            this.Invalidate();
-        }
+        #endregion
 
         protected override void OnPaint(PaintEventArgs e)
         {
@@ -158,9 +218,9 @@ namespace RounedControl
             {
                 int x, y, cwidth, cheight;
                 x = rect.X;
-                y = rect.Y - (BorderWidth / 2);
+                y = rect.Y;
                 cwidth = rect.Width;
-                cheight = TitleFont.Height + (BorderWidth * 2) + DEFAULT_MARGIN;
+                cheight = TitleFont.Height + Font.Height + BorderWidth;
                 var piont = new Point(x, y);
                 var size = new Size(cwidth, cheight);
                 //상단 텍스트 쪽 상자
@@ -210,10 +270,10 @@ namespace RounedControl
         private void SetDisplayRectangle(Rectangle rect)
         {
             var paddingValue = new Padding();
-            paddingValue.Left = BorderWidth + DEFAULT_MARGIN;
-            paddingValue.Right = BorderWidth + DEFAULT_MARGIN;
-            paddingValue.Bottom = BorderWidth + DEFAULT_MARGIN;
-            paddingValue.Top = rect.Height / 2 + BorderWidth;
+            paddingValue.Left = BorderWidth + Margin.Left;
+            paddingValue.Right = BorderWidth + Margin.Right;
+            paddingValue.Bottom = BorderWidth + Margin.Bottom;
+            paddingValue.Top = TitleFont.Height + Margin.Top;
             //padding값이 초기 값이면 초기화 or BorderWidth값이 바뀔때 or rect의 높이가 바뀔때
             if (paddingTop == 0 && paddingLeft == 0 || paddingLeft != (BorderWidth + DEFAULT_MARGIN) || paddingTop != (rect.Height / 2 + BorderWidth))
             {

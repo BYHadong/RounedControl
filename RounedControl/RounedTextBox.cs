@@ -126,5 +126,17 @@ namespace RounedControl
                 e.Graphics.DrawString(Text, Font, new SolidBrush(ForeColor), rectF, stringFromat);
             }
         }
+
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            // 
+            // RounedTextBox
+            // 
+            this.Name = "RounedTextBox";
+            this.Size = new System.Drawing.Size(610, 305);
+            this.ResumeLayout(false);
+
+        }
     }
 }

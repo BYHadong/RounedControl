@@ -7,7 +7,7 @@ namespace RounedControl
 {
     public class RounedButton : Button
     {
-        public delegate void ButtonClickEventHanddler(bool click, RounedButton name);
+        public delegate void ButtonClickEventHanddler(bool click, RounedButton btn);
         public event ButtonClickEventHanddler RounedButton_ClickEvnet;
 
         public enum ButtonStyle
@@ -32,7 +32,8 @@ namespace RounedControl
         private int leavBorderSize;
         private Color leavBorderColor;
         private bool leavBorderVisible;
-        private bool hoverEvent = false;
+        private Color unCheckBoxBackColor = Color.LightGray;
+        private Color checkBoxBackColor = Color.LightSkyBlue;
 
         public int Radius { get => radius; set { radius = value; Invalidate(); } }
         public bool Clicked { get => clicked; set { clicked = value; ClickChangeColor(); } }
@@ -41,6 +42,8 @@ namespace RounedControl
         public StringAlignment TextAlignFormat { get => textAlignFormat; set { textAlignFormat = value; Invalidate(); } }
         public bool BorderVisible { get => borderVisible; set { borderVisible = value; Invalidate(); } }
         public ButtonStyle SelectButtonStyle { get => buttonStyle; set => buttonStyle = value; }
+        public Color UnCheckBoxBackColor { get => unCheckBoxBackColor; set => unCheckBoxBackColor = value; }
+        public Color CheckBoxBackColor { get => checkBoxBackColor; set => checkBoxBackColor = value; }
 
         public RounedButton()
         {
@@ -80,12 +83,12 @@ namespace RounedControl
             {
                 if(Clicked == true)
                 {
-                    BackColor = CLICK_COLOR;
+                    BackColor = CheckBoxBackColor;
                     leavColor = BackColor;
                 }
                 else
                 {
-                    BackColor = NOT_CLICK_COLOR;
+                    BackColor = UnCheckBoxBackColor;
                     leavColor = BackColor;
                 }
             }
@@ -111,11 +114,6 @@ namespace RounedControl
                 leavBorderVisible = BorderVisible;
                 MouseHoverAction();
             }
-        }
-
-        protected override void OnMouseHover(EventArgs e)
-        {
-            base.OnMouseHover(e);
         }
 
         protected override void OnMouseLeave(EventArgs e)
