@@ -69,8 +69,20 @@
     <Compile Include="RounedLabel.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="RounedRangeTrackBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="RounedRangeTrackBar.Designer.cs">
+      <DependentUpon>RounedRangeTrackBar.cs</DependentUpon>
+    </Compile>
     <Compile Include="RounedTextBox.cs">
       <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="RounedTrackBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="RounedTrackBar.Designer.cs">
+      <DependentUpon>RounedTrackBar.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
