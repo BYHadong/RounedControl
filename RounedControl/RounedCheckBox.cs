@@ -20,7 +20,7 @@ namespace RounedControl
             checkBtn.RounedButton_ClickEvnet += new RounedButton.ButtonClickEventHanddler((check, name) =>
             {
                 CheckBoxButtonClicked = check;
-                CheckBoxBUtton_ClickEvent(CheckBoxButtonClicked, LabelText);
+                CheckBoxBUtton_ClickEvent?.Invoke(CheckBoxButtonClicked, LabelText);
             }); 
         }
 
@@ -46,7 +46,7 @@ namespace RounedControl
 
         private void checkLabel_Click(object sender, EventArgs e)
         {
-            Label_ClickEvent(checkLabel.BorderColor);
+            Label_ClickEvent?.Invoke(checkLabel.BorderColor);
         }
     }
 }

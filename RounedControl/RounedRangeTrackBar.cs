@@ -273,7 +273,7 @@ namespace RounedControl
                         lowIsDownPoint = new Point(lowItemX, height - (headerHeight + LineWidth));
                         hiIsDownPoint = new Point(hiItemX, height + (LineWidth + (LineWidth / 2)));
                     }
-                    else if(DataType == ShowDataType.Number && ShowTopBottomItem)
+                    else if (DataType == ShowDataType.Number && ShowTopBottomItem)
                     {
                         var font = new Font("맑은 고딕", 12, FontStyle.Bold);
 
@@ -427,12 +427,12 @@ namespace RounedControl
                 {
                     var calX = width - X;
                     HiValue = GetCurrentValueToInt(calX, width, (Math.Abs(MinValue) + Math.Abs(MaxValue)));
-                    ValueChangeEvent(HiValue, LowValue, clickData);
+                    ValueChangeEvent((Math.Abs(MaxValue) - HiValue), (LowValue - Math.Abs(MinValue)), clickData);
                 }
                 else if (lowIsDown)
                 {
                     LowValue = GetCurrentValueToInt(X, width, (Math.Abs(MinValue) + Math.Abs(MaxValue)));
-                    ValueChangeEvent(HiValue, LowValue, clickData);
+                    ValueChangeEvent((Math.Abs(MaxValue) - HiValue), (LowValue - Math.Abs(MinValue)), clickData);
                 }
 
                 if ((MaxValue - (HiValue + LowValue)) <= 0)
@@ -440,18 +440,20 @@ namespace RounedControl
                     if (hiIsDown)
                     {
                         LowValue = GetCurrentValueToInt(X, width, (Math.Abs(MinValue) + Math.Abs(MaxValue)));
-                        ValueChangeEvent(HiValue, LowValue, clickData);
+                        ValueChangeEvent((Math.Abs(MaxValue) - HiValue), (LowValue - Math.Abs(MinValue)), clickData);
                     }
                     else if (lowIsDown)
                     {
                         var calX = width - X;
                         HiValue = GetCurrentValueToInt(calX, width, (Math.Abs(MinValue) + Math.Abs(MaxValue)));
-                        ValueChangeEvent(HiValue, LowValue, clickData);
+                        ValueChangeEvent((Math.Abs(MaxValue) - HiValue), (LowValue - Math.Abs(MinValue)), clickData);
                     }
                 }
             }
-            catch
-            { }
+            catch (Exception)
+            {
+                Console.WriteLine("Rouned Control (RangeTrackBar) Err");
+            }
         }
 
         //          var currentLowValue = GetCurrentValueToInt(LowValue, MinValue, width);

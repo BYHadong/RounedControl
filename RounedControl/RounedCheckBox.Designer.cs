@@ -77,10 +77,13 @@
             this.checkBtn.BorderColor = System.Drawing.Color.Black;
             this.checkBtn.BorderSize = 0;
             this.checkBtn.BorderVisible = false;
+            this.checkBtn.CheckBoxBackColor = System.Drawing.Color.LightSkyBlue;
             this.checkBtn.Clicked = false;
             this.checkBtn.Dock = System.Windows.Forms.DockStyle.Fill;
             this.checkBtn.Font = new System.Drawing.Font("맑은 고딕", 12F, System.Drawing.FontStyle.Bold);
             this.checkBtn.ForeColor = System.Drawing.Color.Black;
+            this.checkBtn.HoverBorderUse = true;
+            this.checkBtn.ImageSize = new System.Drawing.Size(0, 0);
             this.checkBtn.Location = new System.Drawing.Point(160, 3);
             this.checkBtn.Margin = new System.Windows.Forms.Padding(1, 3, 3, 3);
             this.checkBtn.Name = "checkBtn";
@@ -89,6 +92,7 @@
             this.checkBtn.Size = new System.Drawing.Size(85, 68);
             this.checkBtn.TabIndex = 1;
             this.checkBtn.TextAlignFormat = System.Drawing.StringAlignment.Center;
+            this.checkBtn.UnCheckBoxBackColor = System.Drawing.Color.LightGray;
             this.checkBtn.UseVisualStyleBackColor = false;
             // 
             // RounedCheckBox

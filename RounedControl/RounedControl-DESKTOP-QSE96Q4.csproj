@@ -12,7 +12,6 @@
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -70,20 +69,8 @@
     <Compile Include="RounedLabel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="RounedRangeTrackBar.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="RounedRangeTrackBar.Designer.cs">
-      <DependentUpon>RounedRangeTrackBar.cs</DependentUpon>
-    </Compile>
     <Compile Include="RounedTextBox.cs">
       <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="RounedTrackBar.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="RounedTrackBar.Designer.cs">
-      <DependentUpon>RounedTrackBar.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

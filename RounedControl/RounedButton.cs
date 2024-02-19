@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -44,6 +45,10 @@ namespace RounedControl
         public ButtonStyle SelectButtonStyle { get => buttonStyle; set => buttonStyle = value; }
         public Color UnCheckBoxBackColor { get => unCheckBoxBackColor; set => unCheckBoxBackColor = value; }
         public Color CheckBoxBackColor { get => checkBoxBackColor; set => checkBoxBackColor = value; }
+        [Bindable(true)]
+        public Size ImageSize { get; set; }
+        [Bindable(true)]
+        public bool HoverBorderUse { get; set; } = true;
 
         public RounedButton()
         {
@@ -61,13 +66,53 @@ namespace RounedControl
             pevent.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
             using (var myPath = CreateRounedControl.CreateRounedButtonControl(pevent.Graphics, this, ClientRectangle, Radius, BorderSize))
             {
+                var textlen = TextRenderer.MeasureText(Text, Font);
                 using (var brush = new SolidBrush(BackColor))
                     pevent.Graphics.FillPath(brush, myPath);
 
+                if(Image != null)
+                {
+                    if(ImageSize.Width == 0 && ImageSize.Height == 0)
+                        ImageSize = new Size(Image.Width, Image.Height);
+                    if (ImageAlign == ContentAlignment.MiddleLeft)
+                    {
+                        pevent.Graphics.DrawImage(Image, x: 10, y: (Height - ImageSize.Height) / 2, width: ImageSize.Width, height: ImageSize.Height);
+                    }
+                    else if(ImageAlign == ContentAlignment.MiddleCenter)
+                    {
+                        if(TextImageRelation == TextImageRelation.ImageBeforeText)
+                        {
+                            pevent.Graphics.DrawImage(Image, x: (Width - ImageSize.Width - textlen.Width) / 2, y: (Height - ImageSize.Height) / 2, width: ImageSize.Width, height: ImageSize.Height);
+                        }
+                        else
+                        {
+                            pevent.Graphics.DrawImage(Image, x: (Width - ImageSize.Width) / 2, y: (Height - ImageSize.Height) / 2, width: ImageSize.Width, height: ImageSize.Height);
+                        }
+                    }
+                }
+
                 var textFormat = new StringFormat();
                 textFormat.LineAlignment = TextAlignFormat;
-                textFormat.Alignment = TextAlignFormat;
-                pevent.Graphics.DrawString(Text, Font, new SolidBrush(ForeColor), ClientRectangle, textFormat);
+                if(TextImageRelation == TextImageRelation.ImageBeforeText)
+                {
+                    var rec = ClientRectangle;
+                    var imageX = (Width - ImageSize.Width - textlen.Width) / 2;
+                    if (ImageAlign == ContentAlignment.MiddleCenter)
+                    {
+                        rec.X = imageX + ImageSize.Width;
+                    }
+                    else
+                    {
+                        rec.X = ImageSize.Width + 10;
+                    }
+                    pevent.Graphics.DrawString(Text, Font, new SolidBrush(ForeColor), rec, textFormat);
+                }
+                else
+                {
+                    textFormat.Alignment = TextAlignFormat;
+                    pevent.Graphics.DrawString(Text, Font, new SolidBrush(ForeColor), ClientRectangle, textFormat);
+                }
+                
 
                 if (BorderVisible == true)
                 {
@@ -107,7 +152,7 @@ namespace RounedControl
         protected override void OnMouseEnter(EventArgs e)
         {
             base.OnMouseEnter(e);
-            if (Enabled)
+            if (Enabled && HoverBorderUse)
             {
                 leavBorderSize = BorderSize;
                 leavBorderColor = BorderColor;
@@ -119,9 +164,25 @@ namespace RounedControl
         protected override void OnMouseLeave(EventArgs e)
         {
             base.OnMouseLeave(e);
-            if (Enabled)
+            if (Enabled && HoverBorderUse)
             {
                 MouseLeaveAction();
+            }
+        }
+
+        protected override void OnSizeChanged(EventArgs e)
+        {
+            base.OnSizeChanged(e);
+            if(Height+10 < Font.Height || Height + 10 < ImageSize.Height)
+            {
+                var height = Font.Height < ImageSize.Height ? ImageSize.Height : Font.Height;
+                Height = height;
+            }
+            var textLen = TextRenderer.MeasureText(Text, Font);
+            if (Width + 10 < textLen.Width || (Image != null && Width + 10 < (textLen.Width + ImageSize.Width + 10)))
+            {
+                var width = Image != null ? textLen.Width + ImageSize.Width + 10 : textLen.Width;
+                Width = width;
             }
         }
 

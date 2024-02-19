@@ -110,16 +110,13 @@ namespace RounedControl
                         }
                 }
                 double subItemValue;
-                if (e.ColumnIndex > 0 && 
-                    double.TryParse(e.SubItem.Text, NumberStyles.Currency, NumberFormatInfo.CurrentInfo, out subItemValue) && 
-                    subItemValue <= 0 && 
-                    subItemValue > 0)
+                if (e.ColumnIndex > 0 && double.TryParse(e.SubItem.Text, NumberStyles.Currency, NumberFormatInfo.CurrentInfo, out subItemValue) && subItemValue < 0)
                 {
                     if ((e.ItemState & ListViewItemStates.Selected) == 0)
                     {
                         e.DrawBackground();
                     }
-                    e.Graphics.DrawString(e.SubItem.Text, e.SubItem.Font, new SolidBrush(ItemTextColor), e.Bounds, sf);
+                    e.Graphics.DrawString(e.SubItem.Text, Font, new SolidBrush(ItemTextColor), e.Bounds, sf);
                     return;
                 }
                 e.DrawText(flags);
@@ -202,7 +199,7 @@ namespace RounedControl
                     if (i == idx)
                     {
                         var subItem = item.SubItems[i];
-                        var textFormat = TextRenderer.MeasureText(subItem.Text, subItem.Font);
+                        var textFormat = TextRenderer.MeasureText(subItem.Text, Font);
                         maxLength = maxLength < textFormat.Width ? textFormat.Width : maxLength;
                     }
                 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Text;
@@ -13,6 +14,7 @@ namespace RounedControl
         private readonly Color UNSELECT_COLOR = Color.Black;
 
         #region 속성
+        private Color downForeColor;
         private int radius = 30;
         private int borderSize = 5;
         private Color borderColor = Color.Black;
@@ -24,9 +26,20 @@ namespace RounedControl
         public Color BorderColor { get => borderColor; set { borderColor = value; Invalidate(); } }
         public bool BorderVisible { get => borderVisible; set { borderVisible = value; Invalidate(); } }
         public StringAlignment TextAlign { get => textAlign; set { textAlign = value; Invalidate(); } }
+
+        [EditorBrowsable(EditorBrowsableState.Always)]
+        [Browsable(true)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+        [Bindable(true)]
+        public override string Text { get; set; } = "";
+
+        [Bindable(true)]
+        public string HintText { get; set; } = "Hint";
+        [Bindable(true)]
+        public Color HintTextColor { get; set; } = Color.LightGray;
         #endregion
 
-        public delegate void InputEnterEventHanddler();
+        public delegate void InputEnterEventHanddler(RounedTextBox rounedTextBox);
         public event InputEnterEventHanddler InputEnterEvent;
 
         protected override void OnTextChanged(EventArgs e)
@@ -50,13 +63,16 @@ namespace RounedControl
             {
                 Focus();
                 textBuilder.Clear();
+                Text = HintText;
+                downForeColor = ForeColor;
+                ForeColor = HintTextColor;
                 BorderColor = SELECT_COLOR;
             }
         }
 
-        protected override void OnMouseHover(EventArgs e)
+        protected override void OnMouseEnter(EventArgs e)
         {
-            base.OnMouseHover(e);
+            base.OnMouseEnter(e);
             if (Enabled)
             {
                 BorderColor = SELECT_COLOR;
@@ -70,7 +86,10 @@ namespace RounedControl
             if (Enabled)
             {
                 if (Focused)
+                {
+                    this.Parent.Focus();
                     return;
+                }
                 BorderColor = UNSELECT_COLOR;
             }
         }
@@ -92,7 +111,7 @@ namespace RounedControl
                 else if(e.KeyChar == (char)Keys.Enter)
                 {
                     BorderColor = UNSELECT_COLOR;
-                    InputEnterEvent();
+                    InputEnterEvent(this);
                 }
                 else
                 {
@@ -123,20 +142,17 @@ namespace RounedControl
                 var stringFromat = new StringFormat();
                 stringFromat.Alignment = TextAlign;
                 stringFromat.LineAlignment = TextAlign;
-                e.Graphics.DrawString(Text, Font, new SolidBrush(ForeColor), rectF, stringFromat);
+                if(Text == "" || Text == HintText)
+                {
+                    e.Graphics.DrawString(HintText, Font, new SolidBrush(HintTextColor), rectF, stringFromat);
+                }
+                else
+                {
+                    if (ForeColor == HintTextColor)
+                        ForeColor = downForeColor;
+                    e.Graphics.DrawString(Text, Font, new SolidBrush(ForeColor), rectF, stringFromat);
+                }
             }
-        }
-
-        private void InitializeComponent()
-        {
-            this.SuspendLayout();
-            // 
-            // RounedTextBox
-            // 
-            this.Name = "RounedTextBox";
-            this.Size = new System.Drawing.Size(610, 305);
-            this.ResumeLayout(false);
-
         }
     }
 }
